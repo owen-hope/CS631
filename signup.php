@@ -5,16 +5,27 @@
   try {
     $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
     if(isset($_POST['signup'])) {
-      $username = $_POST['username'];
-      $email = $_POST['email'];
-      $password = $_POST['password'];
+      $FName = $_POST['FName'];
+      $LName = $_POST['LName'];
+      $EMail = $_POST['EMail'];
 
-      $insert = $conn->prepare("INSERT INTO user (username, email, password, active)
-      VALUES(:username,:email,:password, 1)");
+      $Address = $_POST['Address'];
 
-      $insert->bindParam(':username', $username);
-      $insert->bindParam(':email', $email);
-      $insert->bindParam(':password', $password);
+      $Phone = $_POST['Phone'];
+      $Status = $_POST['Status'];
+
+
+      $insert = $conn->prepare("INSERT INTO customer (FName,LName,EMail,Phone,Status,Address)
+      VALUES(:FName,:LName,:EMail,:Phone,:Status,:Address)");
+
+      $insert->bindParam(':FName', $FName);
+      $insert->bindParam(':LName', $LName);
+      $insert->bindParam(':EMail', $EMail);
+
+
+      $insert->bindParam(':Phone', $Phone);
+      $insert->bindParam(':Status', $Status);
+      $insert->bindParam(':Address', $Address);
 
       $insert->execute();
       //header("location:Index.php");
@@ -35,18 +46,24 @@
     <div style="padding:85px;">
       <h1>Create Account here</h1>
       <form method="post">
+        <!--
         <label for="username">Username: </label>
         <input type="text" name="username" placeholder="Username"><br><br>
+      -->
         <label for="FName">First Name: </label>
         <input type="text" name="FName" placeholder="First Name"><br><br>
         <label for="LName">Last Name: </label>
         <input type="text" name="LName" placeholder="Last Name"><br><br>
-        <label for="email">Email: </label>
-        <input type="text" name="email" placeholder="Email"><br><br>
+        <label for="EMail">Email: </label>
+        <input type="text" name="EMail" placeholder="Email"><br><br>
+        <label for="Phone">Phone Number: </label>
+        <input type="text" name="Phone" placeholder="###-###-####"><br><br>
+        <!--
         <label for="password">Password: </label>
         <input type="text" name="password" placeholder="Password"><br><br>
-        <label for="status">Status: </label>
-        <select name="status">
+      -->
+        <label for="Status">Status: </label>
+        <select name="Status">
           <option value="Status">Status</option>
           <option value="regular">Regular</option>
           <option value="silver">Silver</option>

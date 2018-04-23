@@ -8,19 +8,19 @@
 
 
      if(isset($_POST['signin'])) {
-      $email = $_POST['email'];
-      $password = $_POST['password'];
+      $EMail = $_POST['EMail'];
 
-      $select = $conn->prepare("SELECT * FROM user WHERE email='$email' and password='$password'");
+
+      $select = $conn->prepare("SELECT * FROM customer WHERE EMail='$EMail'");
       $select->setFetchMode(PDO::FETCH_ASSOC);
       $select->execute();
       $data=$select->fetch();
 
-      if ($data['email'] != $email and $data['password'] != $password) {
-        echo "invalid email or password";
-      } elseif ($data['email'] == $email and $data['password'] == $password) {
-        $_SESSION['email']=$data['email'];
-        $_SESSION['username']=$data['username'];
+      if ($data['EMail'] != $EMail) {
+        echo "invalid Email";
+      } elseif ($data['EMail'] == $EMail) {
+        $_SESSION['EMail']=$data['EMail'];
+        $_SESSION['FName']=$data['FName'];
         header("location:profile.php");
       }
     }
@@ -36,13 +36,12 @@
      <div style="padding:85px;">
        <h1>Log In Here</h1>
        <form method="post">
-       <label for="email">Email: </label>
-       <input type="text" name="email" placeholder="Email"><br><br>
-       <label for="password">Password: </label>
-       <input type="text" name="password" placeholder="Password"><br><br>
+       <label for="EMail">Email: </label>
+       <input type="text" name="EMail" placeholder="Email"><br><br>
        <input type="submit" name="signin" value="SIGN IN">
-       <a href="signup.php">Sign up!</a>
      </form>
+     <a href="signup.php">Sign up!</a><br><br>
+     <a href="saleStatistics.php">Sale Statistics!</a>
      </div>
    </div>
  </body>
