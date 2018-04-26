@@ -8,26 +8,72 @@
       $FName = $_POST['FName'];
       $LName = $_POST['LName'];
       $EMail = $_POST['EMail'];
-
       $Address = $_POST['Address'];
-
       $Phone = $_POST['Phone'];
       $Status = $_POST['Status'];
 
+      $CCNumber = $_POST['CCNumber'];
+      $SecNumber = $_POST['SecNumber'];
+      $OwnerName = $_POST['OwnerName'];
+      $CCType = $_POST['CCType'];
+      $CCAddress = $_POST['CCAddress'];
+      $ExpDate = $_POST['ExpDate'];
 
+      //For customer table
       $insert = $conn->prepare("INSERT INTO customer (FName,LName,EMail,Phone,Status,Address)
       VALUES(:FName,:LName,:EMail,:Phone,:Status,:Address)");
 
       $insert->bindParam(':FName', $FName);
       $insert->bindParam(':LName', $LName);
       $insert->bindParam(':EMail', $EMail);
-
-
       $insert->bindParam(':Phone', $Phone);
       $insert->bindParam(':Status', $Status);
       $insert->bindParam(':Address', $Address);
 
       $insert->execute();
+
+
+      //for silver_and_above
+      $insert = $conn->prepare("INSERT INTO silver_and_above (CID)
+      VALUES(LAST_INSERT_ID())");
+
+      $insert->execute();
+
+
+
+
+      //for credit_card table
+
+      $insert = $conn->prepare("INSERT INTO credit_card (CCNumber,SecNumber,OwnerName,CCType,CCAddress,ExpDate)
+      VALUES(:CCNumber,:SecNumber,:OwnerName,:CCType,:CCAddress,:ExpDate)");
+
+
+      $insert->bindParam('CCNumber', $CCNumber);
+      $insert->bindParam('SecNumber', $SecNumber);
+      $insert->bindParam('OwnerName', $OwnerName);
+      $insert->bindParam('CCType', $CCType);
+      $insert->bindParam('CCAddress', $CCAddress);
+      $insert->bindParam('ExpDate', $ExpDate);
+
+      $insert->execute();
+
+      //for stored_card
+      $insert = $conn->prepare("INSERT INTO stored_card (CCNumber, CID)
+      VALUES(:CCNumber, LAST_INSERT_ID())");
+
+      $insert->bindParam('CCNumber', $CCNumber);
+
+      $insert->execute();
+
+
+
+      echo "\nPDOStatement::errorInfo():\n";
+      $arr = $insert->errorInfo();
+      print_r($arr);
+      //$last_id = $conn->lastInsertID();
+      //echo "ID: " . $last_id;
+
+
       //header("location:Index.php");
     }
     //header("location:Index.php");

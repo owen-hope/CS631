@@ -1,66 +1,57 @@
 <?php
+  //most frequently sold product
+  function mostFrequentlySold($startDate, $endDate, $conn) {
 
-  function mostFrequentlySold() {
+    //query call for mostFrequentlySold
+
+    //AS OF RN THIS ONLY RETURNS THE PName OF THE ONE WITH THE MAX VALUE
+    $query = $conn->prepare("SELECT p.PName
+    FROM product AS p, cart AS c, appears_in AS a
+    WHERE c.CartID = a.CartID AND a.PID = p.PID AND
+    a.Quantity = (SELECT MAX(Quantity) FROM appears_in WHERE c.CartID = a.CartID AND a.PID = p.PID
+    AND c.TDate BETWEEN '$startDate' AND '$endDate')
+    GROUP BY p.PName");
+
+    $query->execute();
+    echo "\nPDOStatement::errorInfo():\n";
+    $arr = $query->errorInfo();
+    print_r($arr);
+
+
+    //echo "<table>";
+    //Iterate
+    while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+      echo $row['PName'];
+      echo "<br>";
+      $result[] = $row;
+    }
+    //echo "</table>";
+    return $result;
+  }
+
+  function highestNumDistinctCustomers($startDate, $endDate, $conn) {
 
   }
 
-  function highestNumDistinctCustomers() {
+  function bestCustomers($startDate, $endDate, $conn) {
 
   }
 
-  function bestCustomers() {
+  function bestZipCodes($startDate, $endDate, $conn) {
 
   }
 
-  function bestZipCodes() {
+  function aveSellingProductPrice($startDate, $endDate, $conn) {
 
   }
 
-  function aveSellingProductPrice() {
 
-  }
-
-  
   session_start();
   require_once 'dbconfig.php';
 
   try {
     $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
-    if(isset($_POST['getData'])) {
-      $startDate = $_POST['startDate'];
-      $endDate = $_POST['endDate'];
-      $statistics = $_POST['statistics'];
 
-      $mysqlStartDate = date("Y-m-d", strtotime($startDate));
-      $mysqlEndDate = date("Y-m-d", strtotime($endDate));
-
-      switch ($statistics) {
-        case 'mostFrequentlySold':
-          // code...
-          break;
-
-        case 'highestNumDistinctCustomers':
-          // code...
-          break;
-
-        case 'bestCustomers':
-          // code...
-          break;
-
-        case 'bestZipCodes':
-          // code...
-          break;
-
-        case 'aveSellingProductPrice':
-          // code...
-          break;
-
-        default:
-          // code...
-          break;
-      }
-
-    }
 
   } catch (Exception $e) {
     echo $e->getMessage();
@@ -94,3 +85,40 @@
 
 </body>
 </html>
+
+<?php
+if(isset($_POST['getData'])) {
+  $startDate = $_POST['startDate'];
+  $endDate = $_POST['endDate'];
+  $statistics = $_POST['statistics'];
+
+
+  switch ($statistics) {
+    case "mostFrequentlySold":
+       print_r(mostFrequentlySold($startDate, $endDate, $conn));
+
+      break;
+
+    case 'highestNumDistinctCustomers':
+      // code...
+      break;
+
+    case 'bestCustomers':
+      // code...
+      break;
+
+    case 'bestZipCodes':
+      // code...
+      break;
+
+    case 'aveSellingProductPrice':
+      // code...
+      break;
+
+    default:
+      // code...
+      break;
+  }
+
+}
+ ?>

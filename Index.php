@@ -21,6 +21,7 @@
       } elseif ($data['EMail'] == $EMail) {
         $_SESSION['EMail']=$data['EMail'];
         $_SESSION['FName']=$data['FName'];
+        $_SESSION['CID']=$data['CID'];
         header("location:profile.php");
       }
     }
