@@ -79,8 +79,49 @@
     return $result;
   }
 
+  //average selling product price per product type for desktop, laptop, and printer
   function aveSellingProductPrice($startDate, $endDate, $conn) {
 
+    $query = $conn->prepare("SELECT AVG(a.PriceSold) AS av
+    FROM appears_in AS a, product AS p, cart AS c
+    WHERE a.PID = p.PID AND c.CartID = a.CartID AND p.PType = 'Computer'
+    AND c.TDate BETWEEN '$startDate' AND '$endDate'");
+
+    $query->execute();
+
+    while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+      echo $row['av'];
+      echo "<br>";
+      $result[] = $row;
+    }
+
+    $query = $conn->prepare("SELECT AVG(a.PriceSold) AS av
+    FROM appears_in AS a, product AS p, cart AS c
+    WHERE a.PID = p.PID AND c.CartID = a.CartID AND p.PType = 'Printer'
+    AND c.TDate BETWEEN '$startDate' AND '$endDate'");
+
+    $query->execute();
+
+    while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+      echo $row['av'];
+      echo "<br>";
+      $result[] = $row;
+    }
+
+    $query = $conn->prepare("SELECT AVG(a.PriceSold) AS av
+    FROM appears_in AS a, product AS p, cart AS c
+    WHERE a.PID = p.PID AND c.CartID = a.CartID AND p.PType = 'Laptop'
+    AND c.TDate BETWEEN '$startDate' AND '$endDate'");
+
+    $query->execute();
+
+    while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+      echo $row['av'];
+      echo "<br>";
+      $result[] = $row;
+    }
+
+    return $result;
   }
 
 
@@ -150,7 +191,7 @@ if(isset($_POST['getData'])) {
       break;
 
     case 'aveSellingProductPrice':
-      // code...
+      print_r(aveSellingProductPrice($startDate, $endDate, $conn));
       break;
 
     default:
