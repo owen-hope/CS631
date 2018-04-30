@@ -2,8 +2,6 @@
   //most frequently sold product
   function mostFrequentlySold($startDate, $endDate, $conn) {
 
-    //query call for mostFrequentlySold
-
     //AS OF RN THIS ONLY RETURNS THE PName OF THE ONE WITH THE MAX VALUE
     $query = $conn->prepare("SELECT p.PName
     FROM product AS p, cart AS c, appears_in AS a
@@ -29,16 +27,56 @@
     return $result;
   }
 
+  //query call for products sold to highest number of different customers
   function highestNumDistinctCustomers($startDate, $endDate, $conn) {
 
+
+    $query = $conn->prepare();
+
   }
 
+  //query call for the top 10 customers who spend the most money
   function bestCustomers($startDate, $endDate, $conn) {
 
+    $query = $conn->prepare("SELECT c.FName, c.LName, SUM((a.PriceSold * a.Quantity)) AS s
+    FROM appears_in AS a, cart AS ca, shipping_address AS sa, customer AS c
+    WHERE a.CartID = ca.CartID AND (ca.CID, ca.SAName) = (sa.CID, sa.SAName) AND sa.CID = c.CID
+    AND ca.TDate BETWEEN '$startDate' AND '$endDate'
+    GROUP BY c.CID
+    ORDER BY s DESC LIMIT 10");
+
+    $query->execute();
+
+    //Iterate
+    while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+      echo $row['FName'] . " " . $row['LName'];
+      echo "<br>";
+      $result[] = $row;
+    }
+
+    return $result;
   }
 
+  //query call for 5 best zip codes. Zip codes that have the most shipped to them
   function bestZipCodes($startDate, $endDate, $conn) {
 
+    $query = $conn->prepare("SELECT sa.Zip, COUNT(*) AS c
+    FROM shipping_address AS sa, cart AS ca
+    WHERE (ca.CID, ca.SAName) = (sa.CID, sa.SAName) AND
+    ca.TDate BETWEEN '$startDate' AND '$endDate'
+    GROUP BY sa.Zip
+    ORDER BY c DESC LIMIT 5");
+
+    $query->execute();
+
+    //Iterate
+    while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+      echo $row['Zip'];
+      echo "<br>";
+      $result[] = $row;
+    }
+
+    return $result;
   }
 
   function aveSellingProductPrice($startDate, $endDate, $conn) {
@@ -104,11 +142,11 @@ if(isset($_POST['getData'])) {
       break;
 
     case 'bestCustomers':
-      // code...
+      print_r(bestCustomers($startDate, $endDate, $conn));
       break;
 
     case 'bestZipCodes':
-      // code...
+      print_r(bestZipCodes($startDate, $endDate, $conn));
       break;
 
     case 'aveSellingProductPrice':
