@@ -37,6 +37,7 @@
 
   //query call for the top 10 customers who spend the most money
   function bestCustomers($startDate, $endDate, $conn) {
+    $rank = 1;
 
     $query = $conn->prepare("SELECT c.FName, c.LName, SUM((a.PriceSold * a.Quantity)) AS s
     FROM appears_in AS a, cart AS ca, shipping_address AS sa, customer AS c
@@ -47,18 +48,30 @@
 
     $query->execute();
 
+    echo "<table>
+    <tr>
+    <th>Rank</th>
+    <th>Firstname</th>
+    <th>Lastname</th>
+    </tr>";
     //Iterate
     while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
-      echo $row['FName'] . " " . $row['LName'];
-      echo "<br>";
+      echo "<tr>";
+      echo "<td>" . $rank . "</td>";
+      echo "<td>" . $row['FName'] . "</td>";
+      echo "<td>" . $row['LName'] . "</td>";
+      echo "</tr>";
       $result[] = $row;
+      $rank++;
     }
+    echo "</table>";
 
     return $result;
   }
 
   //query call for 5 best zip codes. Zip codes that have the most shipped to them
   function bestZipCodes($startDate, $endDate, $conn) {
+    $rank = 1;
 
     $query = $conn->prepare("SELECT sa.Zip, COUNT(*) AS c
     FROM shipping_address AS sa, cart AS ca
@@ -69,12 +82,20 @@
 
     $query->execute();
 
+    echo "<table>
+    <tr>
+    <th>Rank</th>
+    <th>ZipCodes</th>
+    </tr>";
     //Iterate
     while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
-      echo $row['Zip'];
-      echo "<br>";
+      echo "<tr>";
+      echo "<td>" . $rank . "</td>";
+      echo "<td>" . $row['Zip'] . "</td>";
       $result[] = $row;
+      $rank++;
     }
+    echo "</table>";
 
     return $result;
   }
@@ -191,7 +212,20 @@ if(isset($_POST['getData'])) {
       break;
 
     case 'aveSellingProductPrice':
-      print_r(aveSellingProductPrice($startDate, $endDate, $conn));
+      $data = aveSellingProductPrice($startDate, $endDate, $conn);
+      echo "<table>
+      <tr>
+      <th>Computers</th>
+      <th>Printers</th>
+      <th>Laptops</th>
+      </tr>";
+
+      echo "<tr>";
+      echo "<td>" . $data[0]['av'] . "</td>";
+      echo "<td>" . $data[1]['av'] . "</td>";
+      echo "<td>" . $data[2]['av'] . "</td>";
+      echo "</tr>";
+      echo "</table>";
       break;
 
     default:
